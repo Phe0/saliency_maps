@@ -1,8 +1,8 @@
 import time
 import cv2
-import colorFeatureMaps
-import orientationFeatureMaps
-import graphBasedActivation
+import gbvs.colorFeatureMaps as colorFeatureMaps
+import gbvs.orientationFeatureMaps as orientationFeatureMaps
+import gbvs.graphBasedActivation as graphBasedActivation
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -43,7 +43,6 @@ def run(image, params):
     }
 
     # calculating feature maps
-
     for i in range(0, len(b_pyr)):
         p_r = r_pyr[i]
         p_g = g_pyr[i]
@@ -95,6 +94,7 @@ def run(image, params):
     # blurred = cv2.GaussianBlur(gray,(4,4), 4)
     # gray2 = cv2.normalize(blurred, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     mastermap_res = cv2.resize(gray, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_CUBIC)
+    print("@@@5")
 
     return mastermap_res
 

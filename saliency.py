@@ -1,19 +1,23 @@
 import cv2
 import time
-import gbvs.gbvs as gbvs
+import argparse
 import numpy as np
 from matplotlib import pyplot as plt
+from gbvs import gbvs
 
-def run(path):
+def run(image):
     params = gbvs.setupParams()
-    image = cv2.imread(path)
     image = image / 255.0
 
     mask = gbvs.run(image, params) * 255.0
     mask = np.uint8(mask)
+    plt.imshow("mask", mask)
 
     (T, thresh) = cv2.threshold(mask, 75, 255, cv2.THRESH_BINARY)
+    plt.imshow("T", T)
+    plt.imshow("tresh", thresh)
     mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+    plt.imshow("mask", mask)
     colored = cv2.applyColorMap(mask, cv2.COLORMAP_JET)
     
 
@@ -22,9 +26,15 @@ def run(path):
     return addition
 
 if __name__ == '__main__':
-
-    image = run('./images/1.jpg')
-    oname = "./outputs/1.jpg"
-    cv2.imwrite(oname, image)
+    args = argparse.ArgumentParser()
+    args.add_argument(
+            "-i", "--image", required=True,
+            help="path to input image")
+    args = vars(args.parse_args())
+    image = cv2.imread(args["image"])
+    out_name = "./outputs/3.jpg"
+    image = run(image)
+    cv2.imwrite(out_name, image)
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    plt.imshow(image)
     plt.show()
