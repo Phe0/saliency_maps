@@ -1,30 +1,27 @@
 import cv2
-import time
-import gbvs.gbvs as gbvs
-import numpy as np
-from matplotlib import pyplot as plt
+import argparse
 
-def run(path):
-    params = gbvs.setupParams()
-    image = cv2.imread(path)
-    image = image / 255.0
+args = argparse.ArgumentParser()
+args.add_argument(
+        "-i", "--image", required=False,
+        help="path to input image")
+args = vars(args.parse_args())
 
-    mask = gbvs.run(image, params) * 255.0
-    mask = np.uint8(mask)
+image = cv2.imread(args["image"])
 
-    (T, thresh) = cv2.threshold(mask, 75, 255, cv2.THRESH_BINARY)
-    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    colored = cv2.applyColorMap(mask, cv2.COLORMAP_JET)
-    
+#saliency = cv2.saliency.StaticSaliencySpectralResidual_create()
+saliency = cv2.saliency.StaticSaliencyFineGrained_create()
+success, saliency_map = saliency.computeSaliency(image)
+saliency_map = (saliency_map*255).astype("uint8")
+#cv2.imshow("Image Original", image)
+#cv2.imshow("Output", saliency_map)
 
-    masked = cv2.bitwise_and(colored, colored, mask = thresh)
-    addition = cv2.addWeighted(image, 1.0, masked, 0.1, 0, dtype=cv2.CV_32F)
-    return addition
-
-if __name__ == '__main__':
-
-    image = run('./images/1.jpg')
-    oname = "./outputs/1.jpg"
-    cv2.imwrite(oname, image)
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.show()
+cv2.imshow("Saliency Map", saliency_map)
+thresh_map = cv2.threshold(saliency_map.astype("uint8"), 0, 255,
+	cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+cv2.imshow("Thresh Map", thresh_map)
+heat_map = cv2.applyColorMap(thresh_map, cv2.COLORMAP_RAINBOW)
+cv2.imshow("Color Map", heat_map)
+new_name = "./outputs/3.jpg"
+cv2.imwrite(new_name, heat_map)
+cv2.waitKey(0)
