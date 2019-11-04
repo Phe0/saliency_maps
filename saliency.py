@@ -7,22 +7,17 @@ from gbvs import gbvs
 
 def run(image):
     params = gbvs.setupParams()
-    image = image / 255.0
 
-    mask = gbvs.run(image, params) * 255.0
+    mask = gbvs.run(image/255, params) * 255
     mask = np.uint8(mask)
-    plt.imshow("mask", mask)
+    cv2.imshow("Mask GBVS", mask)
 
-    (T, thresh) = cv2.threshold(mask, 75, 255, cv2.THRESH_BINARY)
-    plt.imshow("T", T)
-    plt.imshow("tresh", thresh)
-    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    plt.imshow("mask", mask)
+    threshed = cv2.threshold(mask, 75, 255, cv2.THRESH_BINARY)[1]
+    cv2.imshow("Gray scale", threshed)
     colored = cv2.applyColorMap(mask, cv2.COLORMAP_JET)
-    
 
-    masked = cv2.bitwise_and(colored, colored, mask = thresh)
-    addition = cv2.addWeighted(image, 1.0, masked, 0.1, 0, dtype=cv2.CV_32F)
+    masked = cv2.bitwise_and(colored, colored, mask = threshed)
+    addition = cv2.addWeighted(image, 1.0, masked, 0.6, 0)
     return addition
 
 if __name__ == '__main__':
@@ -30,11 +25,15 @@ if __name__ == '__main__':
     args.add_argument(
             "-i", "--image", required=True,
             help="path to input image")
+    args.add_argument(
+            "-o", "--output", required=True,
+            help="path to save the output image")
     args = vars(args.parse_args())
     image = cv2.imread(args["image"])
-    out_name = "./outputs/3.jpg"
+    #out_name = "./outputs/3.jpg"
     image = run(image)
-    cv2.imwrite(out_name, image)
-    plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    plt.imshow(image)
+    cv2.imshow("Colored map", image)
+    #cv2.imwrite(out_name, image)
+    cv2.imwrite(args["output"], image)
     plt.show()
+    cv2.waitKey(0)

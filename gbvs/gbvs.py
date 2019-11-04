@@ -94,7 +94,6 @@ def run(image, params):
     # blurred = cv2.GaussianBlur(gray,(4,4), 4)
     # gray2 = cv2.normalize(blurred, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     mastermap_res = cv2.resize(gray, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_CUBIC)
-    print("@@@5")
 
     return mastermap_res
 
