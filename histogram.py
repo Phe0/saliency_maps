@@ -1,8 +1,5 @@
 import cv2
-import numpy as np 
-import matplotlib.pyplot as plt
 import os
-from statistics import mode
 
 def para_cinza(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -18,19 +15,15 @@ def extrair_caracteristica(img):
     return histString
 
 if __name__ == '__main__':
-    path = './images'
-    files = []
+    path = './MedDB5000/'
 
-    text = open('histograma.txt', 'a+')
+    with open('histograma.txt', 'w') as text:
+        for d, _, fs in os.walk(path):
+            for f in fs:
+                imgPath = d + '/' + f
+                img = cv2.imread(imgPath)
 
-    for r, d, f in os.walk(path):
-        for dir in d:
-            for r1, d1, f1 in os.walk(path + '/' + dir):
-                for file in f1:
-                    if '.jpg' in file:
-                        imgPath = path + '/' + dir + '/' + file
-                        img = cv2.imread(imgPath)
-                        img = para_cinza(img)
-                        hist = extrair_caracteristica(img) + ' ' + dir + '\n'
-                        text.write(hist)
-
+                if img is not None:
+                    img = para_cinza(img)
+                    hist = extrair_caracteristica(img) + ' ' + d.split('/')[2] + '\n'
+                    text.write(hist)
