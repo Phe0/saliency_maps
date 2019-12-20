@@ -1,14 +1,15 @@
 import cv2
 import os
 
-header = """@relation BaseImagens
-@attribute h0 NUMERIC
-@attribute h1 NUMERIC
-....
-@atttibute h255 NUMERIC
-@attribute classe STRING
-@data\n
-"""
+def make_header():
+    header = "@relation BaseImagens"
+
+    for i in range(256):
+        header += f"\n@attribute h{i} NUMERIC"
+
+    header += "\n@attribute classe STRING\n@data\n\n"
+    
+    return header
 
 def get_gray_scale(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # get gray scale of the image
@@ -21,12 +22,12 @@ def get_histogram(img):
     histString = ''
 
     for i in hist:
-        histString = histString + str(i[0]) + ', ' # get histogram string
+        histString = histString + str(i[0]) + ',' # get histogram string
     return histString
 
 def write_histograms_file(path): # write file with histograms
     with open('histograms.arff', 'w') as text:
-        text.write(header)
+        text.write(make_header())
         for d, _, fs in os.walk(path): 
             for f in fs:
                 imgPath = d + '/' + f
@@ -34,7 +35,7 @@ def write_histograms_file(path): # write file with histograms
 
                 if img is not None:
                     img = get_gray_scale(img)
-                    hist = get_histogram(img) + d.split('/')[2] + '\n'
+                    hist = get_histogram(img) + ' ' + d.split('/')[2] + '\n'
                     text.write(hist)
 
 path = './MedDB5000/'
