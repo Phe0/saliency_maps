@@ -7,7 +7,12 @@ def make_header():
     for i in range(256):
         header += f"\n@attribute h{i} NUMERIC"
 
-    header += "\n@attribute classe NUMERIC\n@data\n\n"
+    header += "\n@attribute classe {"
+
+    for i in range(1, 31):
+        header += "{i},"
+    
+    header+= "32}\n@data\n\n"
     
     return header
 
