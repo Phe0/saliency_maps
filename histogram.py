@@ -23,8 +23,8 @@ def get_gray_scale(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # get gray scale of the image
     return gray
 
-def get_histogram(img):
-    hist = cv2.calcHist([img], [0], None, [27], [0, 26]) # get histogram
+def get_histogram(img, rangeSize):
+    hist = cv2.calcHist([img], [0], None, [rangeSize], [0, rangeSize]) # get histogram
 
     cv2.normalize(hist, hist) # normalizes the histogram
     histString = ''
@@ -57,7 +57,7 @@ def write_histograms_file(path, extractor): # write file with histograms
                     img = get_gray_scale(img)
                     if(extractor == 'lbp'):
                         img = get_LBP(img, 24, 8)
-                    hist = get_histogram(img) + ' ' + str(i) + '\n'
+                    hist = get_histogram(img, rangeSize) + ' ' + str(i) + '\n'
                     text.write(hist)
             i+=1
 
