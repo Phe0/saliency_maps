@@ -12,10 +12,10 @@ def make_header(rangeSize):
 
     header += "\n@attribute classe {"
 
-    for i in range(1, 32):
+    for i in range(1, 9):
         header += f"{i},"
     
-    header+= "32}\n@data\n\n"
+    header+= "9}\n@data\n\n"
     
     return header
 
